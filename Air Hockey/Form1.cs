@@ -21,7 +21,12 @@ namespace Air_Hockey
         int player1Score = 0;
         int player2Score = 0;
 
-        int playerSpeed = 5;
+        int player1Speed = 5;
+        int player2Speed = 5;
+
+        Random randomGenerator = new Random();
+
+        int randomNumber;
 
         bool wPressed = false;
         bool sPressed = false;
@@ -33,9 +38,12 @@ namespace Air_Hockey
         bool rightPressed = false;
 
         SolidBrush blueBrush = new SolidBrush(Color.DodgerBlue);
-        SolidBrush redBrush = new SolidBrush(Color.Red);
         SolidBrush whiteBrush = new SolidBrush(Color.White);
         SolidBrush yellowBrush = new SolidBrush(Color.Yellow);
+        Pen bluePen = new Pen(Color.Blue);
+        Pen redPen = new Pen(Color.Red);
+        Pen whitePen = new Pen(Color.White);
+
         public Form1()
         {
             InitializeComponent();
@@ -109,51 +117,146 @@ namespace Air_Hockey
             //move player 1
             if (wPressed == true && player1.Y > 0)
             {
-                player1.Y -= playerSpeed;
+                player1.Y -= player1Speed;
             }
 
             if (sPressed == true && player1.Y < this.Height - player1.Height)
             {
-                player1.Y += playerSpeed;
+                player1.Y += player1Speed;
             }
 
             if (aPressed == true && player1.X > 0)
             {
-                player1.X -= playerSpeed;
+                player1.X -= player1Speed;
             }
 
             if (dPressed == true && player1.X < this.Width - player1.Width)
             {
-                player1.X += playerSpeed;
+                player1.X += player1Speed;
             }
 
             //move player2
             if (upPressed == true && player2.Y > 0)
             {
-                player2.Y -= playerSpeed;
+                player2.Y -= player2Speed;
             }
 
             if (downPressed == true && player2.Y < this.Height - player2.Height)
             {
-                player2.Y += playerSpeed;
+                player2.Y += player2Speed;
             }
 
             if (leftPressed == true && player2.X > 0)
             {
-                player2.X -= playerSpeed;
+                player2.X -= player2Speed;
             }
 
             if (rightPressed == true && player2.X < this.Width - player2.Width)
             {
-                player2.X += playerSpeed;
+                player2.X += player2Speed;
             }
-                Refresh();
+
+            //check if either player hits a point square. If it dose give the corresponding player a point,
+            //and redraw the point square somewhere else. 
+            if (player1.IntersectsWith(point))
+            {
+                point.X = randomGenerator.Next(30, 330);
+                point.Y = randomGenerator.Next(30, 330);
+
+                player1Score++;
+            }
+            else if (player2.IntersectsWith(point))
+            {
+                point.X = randomGenerator.Next(30, 415);
+                point.Y = randomGenerator.Next(30, 415);
+
+                player2Score++;
+            }
+
+            if (player1Score == 5)
+            {
+                gameTimer.Stop();
+
+                winnerLabel.Text = "Player 1 wins";
+
+            }
+
+            if (player2Score == 5)
+            {
+                gameTimer.Stop();
+
+                winnerLabel.Text = "Player 2 wins";
+            }
+
+            //check if either player hits a speed boost. If so give the corresponding player a speed boost,
+            //and redraw the speed boost somewhere else.
+            if (player1.IntersectsWith(speBoost))
+            {
+                speBoost.X = randomGenerator.Next(30, 415); 
+                speBoost.Y = randomGenerator.Next(30, 415);
+
+                player1Speed *= randomGenerator.Next(1, 3); 
+            }
+            
+            if (player2.IntersectsWith(speBoost))
+            {
+                speBoost.X = randomGenerator.Next(30, 415); ;
+                speBoost.Y = randomGenerator.Next(30, 415); ;
+
+                player2Speed *= randomGenerator.Next(1, 3);
+            }
+
+            //check if player hits a wall
+            //right wall
+            if (player1.X > 405)
+            {
+                player1.X = 404;
+            }
+            if (player2.X > 405)
+            {
+                player2.X = 404;
+            }
+            //left wall
+            if (player1.X < 25)
+            {
+                player1.X = 26;
+            }
+            if (player2.X < 25)
+            {
+                player2.X = 26;
+            }
+            //top wall
+            if (player1.Y < 25)
+            {
+                player1.Y = 26;
+            }
+            if (player2.Y < 25)
+            {
+                player2.Y = 26;
+            }
+            //bottom wall
+            if (player1.Y > 390)
+            {
+                player1.Y = 389;
+            }
+            if (player2.Y > 390)
+            {
+                player2.Y = 389;
+            }
+
+            Refresh();
         }
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
-            e.Graphics.FillRectangle(blueBrush, player1);
-            e.Graphics.FillRectangle(redBrush, player2);
+            //displayes all drawn and written components   
+
+            p1ScoreLabel.Text = $"Player 1 :{player1Score}";
+            p2ScoreLabel.Text = $"Player 2 :{player2Score}";
+
+            e.Graphics.DrawRectangle(whitePen, 25, 25, 415, 400);
+            e.Graphics.DrawRectangle(bluePen, player1);
+            e.Graphics.DrawRectangle(redPen, player2);
             e.Graphics.FillRectangle(whiteBrush, point);
             e.Graphics.FillEllipse(yellowBrush, speBoost);
         }
