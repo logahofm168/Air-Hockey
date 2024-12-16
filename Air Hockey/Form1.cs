@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Media;
 
 namespace Air_Hockey
 {
@@ -23,6 +24,8 @@ namespace Air_Hockey
 
         int player1Speed = 5;
         int player2Speed = 5;
+
+        SoundPlayer soundPlayer = new SoundPlayer();
 
         Random randomGenerator = new Random();
 
@@ -44,9 +47,17 @@ namespace Air_Hockey
         Pen redPen = new Pen(Color.Red);
         Pen whitePen = new Pen(Color.White);
 
+
         public Form1()
         {
             InitializeComponent();
+
+            //makes both the point and speBoost block start in a random spot
+            point.X = randomGenerator.Next(30, 415);
+            point.Y = randomGenerator.Next(30, 415);
+
+            speBoost.X = randomGenerator.Next(30, 415);
+            speBoost.Y = randomGenerator.Next(30, 415);
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -114,6 +125,7 @@ namespace Air_Hockey
 
         private void gameTimer_Tick(object sender, EventArgs e)
         {
+
             //move player 1
             if (wPressed == true && player1.Y > 0)
             {
@@ -160,10 +172,13 @@ namespace Air_Hockey
             //and redraw the point square somewhere else. 
             if (player1.IntersectsWith(point))
             {
-                point.X = randomGenerator.Next(30, 330);
-                point.Y = randomGenerator.Next(30, 330);
+                point.X = randomGenerator.Next(30, 415);
+                point.Y = randomGenerator.Next(30, 415);
 
                 player1Score++;
+
+                soundPlayer = new SoundPlayer(Properties.Resources.Point_noise);
+                soundPlayer.Play();
             }
             else if (player2.IntersectsWith(point))
             {
@@ -171,6 +186,9 @@ namespace Air_Hockey
                 point.Y = randomGenerator.Next(30, 415);
 
                 player2Score++;
+
+                soundPlayer = new SoundPlayer(Properties.Resources.Point_noise);
+                soundPlayer.Play();
             }
 
             if (player1Score == 5)
@@ -179,6 +197,8 @@ namespace Air_Hockey
 
                 winnerLabel.Text = "Player 1 wins";
 
+                soundPlayer = new SoundPlayer(Properties.Resources.Winning_sound);
+                soundPlayer.Play();
             }
 
             if (player2Score == 5)
@@ -186,24 +206,37 @@ namespace Air_Hockey
                 gameTimer.Stop();
 
                 winnerLabel.Text = "Player 2 wins";
+
+                soundPlayer = new SoundPlayer(Properties.Resources.Winning_sound);
+                soundPlayer.Play();
             }
 
             //check if either player hits a speed boost. If so give the corresponding player a speed boost,
             //and redraw the speed boost somewhere else.
             if (player1.IntersectsWith(speBoost))
-            {
-                speBoost.X = randomGenerator.Next(30, 415); 
-                speBoost.Y = randomGenerator.Next(30, 415);
+            { 
+                    speBoostTimer.Enabled = true;
 
-                player1Speed *= randomGenerator.Next(1, 3); 
+                    speBoost.X = randomGenerator.Next(30, 415);
+                    speBoost.Y = randomGenerator.Next(30, 415);
+
+                    player1Speed *= 7;
+
+                soundPlayer = new SoundPlayer(Properties.Resources.speed_boost_sound);
+                soundPlayer.Play();
             }
             
             if (player2.IntersectsWith(speBoost))
             {
+                speBoostTimer.Enabled = true;
+
                 speBoost.X = randomGenerator.Next(30, 415); ;
                 speBoost.Y = randomGenerator.Next(30, 415); ;
 
-                player2Speed *= randomGenerator.Next(1, 3);
+                player2Speed *= 7;
+
+                soundPlayer = new SoundPlayer(Properties.Resources.speed_boost_sound);
+                soundPlayer.Play();
             }
 
             //check if player hits a wall
@@ -211,10 +244,11 @@ namespace Air_Hockey
             if (player1.X > 405)
             {
                 player1.X = 404;
+
             }
             if (player2.X > 405)
             {
-                player2.X = 404;
+                player2.X = 404;;
             }
             //left wall
             if (player1.X < 25)
@@ -249,6 +283,7 @@ namespace Air_Hockey
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
+
             //displayes all drawn and written components   
 
             p1ScoreLabel.Text = $"Player 1 :{player1Score}";
@@ -259,6 +294,15 @@ namespace Air_Hockey
             e.Graphics.DrawRectangle(redPen, player2);
             e.Graphics.FillRectangle(whiteBrush, point);
             e.Graphics.FillEllipse(yellowBrush, speBoost);
+        }
+
+        private void speBoostTimer_Tick(object sender, EventArgs e)
+        {
+            // makes the speed boost temporary
+            speBoostTimer.Enabled = false;
+
+            player1Speed = 5; 
+            player2Speed = 5;
         }
     }
 }

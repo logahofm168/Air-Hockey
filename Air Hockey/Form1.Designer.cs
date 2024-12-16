@@ -33,6 +33,7 @@
             this.p1ScoreLabel = new System.Windows.Forms.Label();
             this.p2ScoreLabel = new System.Windows.Forms.Label();
             this.winnerLabel = new System.Windows.Forms.Label();
+            this.speBoostTimer = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // gameTimer
@@ -74,6 +75,11 @@
             this.winnerLabel.TabIndex = 2;
             this.winnerLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // speBoostTimer
+            // 
+            this.speBoostTimer.Interval = 2000;
+            this.speBoostTimer.Tick += new System.EventHandler(this.speBoostTimer_Tick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -100,6 +106,7 @@
         private System.Windows.Forms.Label p1ScoreLabel;
         private System.Windows.Forms.Label p2ScoreLabel;
         private System.Windows.Forms.Label winnerLabel;
+        private System.Windows.Forms.Timer speBoostTimer;
     }
 }
 
