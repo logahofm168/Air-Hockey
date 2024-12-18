@@ -89,5 +89,8 @@
   <ItemGroup>
     <None Include="Resources\535890__jerimee__coin-jump.wav" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\386862__profmudkip__8-bit-explosion.wav" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

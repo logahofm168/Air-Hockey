@@ -121,6 +121,9 @@
   <data name="Point noise" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\350862__cabled_mess__blip_c_04.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="Redoes speed" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\386862__profmudkip__8-bit-explosion.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="speed boost sound" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\535890__jerimee__coin-jump.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>

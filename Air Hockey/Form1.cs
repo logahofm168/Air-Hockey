@@ -275,6 +275,9 @@ namespace Air_Hockey
                 redosSpe.X = player1.X + player1.Width;
 
                 player1Speed = 3;
+
+                soundPlayer = new SoundPlayer(Properties.Resources.Redoes_speed);
+                soundPlayer.Play();
             }
 
             if (player2.IntersectsWith(redosSpe))
@@ -283,6 +286,9 @@ namespace Air_Hockey
                 redosSpe.X = player1.X + player1.Width;
 
                 player2Speed = 3;
+
+                soundPlayer = new SoundPlayer(Properties.Resources.Redoes_speed);
+                soundPlayer.Play();
             }
 
             //check if player hits a wall

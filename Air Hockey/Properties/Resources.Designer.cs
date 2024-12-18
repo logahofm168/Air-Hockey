@@ -72,6 +72,15 @@ namespace Air_Hockey.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
         /// </summary>
+        internal static System.IO.UnmanagedMemoryStream Redoes_speed {
+            get {
+                return ResourceManager.GetStream("Redoes speed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
         internal static System.IO.UnmanagedMemoryStream speed_boost_sound {
             get {
                 return ResourceManager.GetStream("speed boost sound", resourceCulture);
