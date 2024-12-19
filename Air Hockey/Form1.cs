@@ -18,15 +18,15 @@ namespace Air_Hockey
         Rectangle player2 = new Rectangle(390, 170, 35, 35);
         Rectangle point = new Rectangle(295, 195, 10, 10);
         Rectangle speBoost = new Rectangle(200, 195, 10, 10);
-        Rectangle redosSpe = new Rectangle(295, 195, 10, 10);
+        Rectangle reduceSpe = new Rectangle(295, 195, 10, 10);
 
         int player1Score = 0;
         int player2Score = 0;
 
         int player1Speed = 5;
         int player2Speed = 5;
-        int redosSpeXSpeed = -5;
-        int redosSpeYSpeed = 5;
+        int reduceSpeXSpeed = -5;
+        int reduceSpeYSpeed = 5;
 
         SoundPlayer soundPlayer = new SoundPlayer();
 
@@ -130,9 +130,50 @@ namespace Air_Hockey
         private void gameTimer_Tick(object sender, EventArgs e)
         {
             //move redosSpe
-            redosSpe.X += redosSpeXSpeed;
-            redosSpe.Y += redosSpeYSpeed;
+            reduceSpe.X += reduceSpeXSpeed;
+            reduceSpe.Y += reduceSpeYSpeed;
 
+            playerMovement();
+
+            pointCheck();
+
+            speedCheck();
+
+            reduceSpeCheck();
+
+            wallCheck();
+
+            Refresh();
+        }
+
+        private void Form1_Paint(object sender, PaintEventArgs e)
+        {
+
+            //displayes all drawn and written components   
+
+            p1ScoreLabel.Text = $"Player 1 :{player1Score}";
+            p2ScoreLabel.Text = $"Player 2 :{player2Score}";
+
+            e.Graphics.DrawRectangle(whitePen, 25, 25, 415, 400);
+            e.Graphics.DrawRectangle(bluePen, player1);
+            e.Graphics.DrawRectangle(redPen, player2);
+            e.Graphics.FillRectangle(whiteBrush, point);
+            e.Graphics.FillEllipse(yellowBrush, speBoost); 
+            e.Graphics.DrawRectangle(fuchsiaPen, reduceSpe);
+        }
+
+        private void speBoostTimer_Tick(object sender, EventArgs e)
+        {
+            // makes the speed boost temporary
+            speBoostTimer.Enabled = false;
+
+            player1Speed = 5; 
+            player2Speed = 5;
+
+        }
+
+        public void playerMovement ()
+        {
             //move player 1
             if (wPressed == true && player1.Y > 0)
             {
@@ -175,27 +216,41 @@ namespace Air_Hockey
                 player2.X += player2Speed;
             }
 
-            //check if redosSpe hit wall and change direction if it does 
-            if (redosSpe.Y < 30 || redosSpe.Y > this.Height - redosSpe.Height)
+        }
+
+        public void speedCheck()
+        {
+            //check if either player hits a speed boost. If so give the corresponding player a speed boost,
+            //and redraw the speed boost somewhere else.
+            if (player1.IntersectsWith(speBoost))
             {
-                redosSpeYSpeed *= -1;  
+                speBoostTimer.Enabled = true;
+
+                speBoost.X = randomGenerator.Next(30, 415);
+                speBoost.Y = randomGenerator.Next(30, 415);
+
+                player1Speed *= 7;
+
+                soundPlayer = new SoundPlayer(Properties.Resources.speed_boost_sound);
+                soundPlayer.Play();
             }
 
-            if (redosSpe.Y > 410 || redosSpe.Y > this.Height - redosSpe.Height)
+            if (player2.IntersectsWith(speBoost))
             {
-                redosSpeYSpeed *= -1;
-            }
+                speBoostTimer.Enabled = true;
 
-            if (redosSpe.X < 30 || redosSpe.X > this.Width - redosSpe.Width)
-            {
-                redosSpeXSpeed *= -1;
-            }
+                speBoost.X = randomGenerator.Next(30, 415); ;
+                speBoost.Y = randomGenerator.Next(30, 415); ;
 
-            if (redosSpe.X > 425|| redosSpe.X > this.Height - redosSpe.Height)
-            {
-                redosSpeXSpeed *= -1;
-            }
+                player2Speed *= 7;
 
+                soundPlayer = new SoundPlayer(Properties.Resources.speed_boost_sound);
+                soundPlayer.Play();
+            }
+        }
+
+        public void pointCheck ()
+        {
             //check if either player hits a point square. If it dose give the corresponding player a point,
             //and redraw the point square somewhere else. 
             if (player1.IntersectsWith(point))
@@ -238,59 +293,10 @@ namespace Air_Hockey
                 soundPlayer = new SoundPlayer(Properties.Resources.Winning_sound);
                 soundPlayer.Play();
             }
+        }
 
-            //check if either player hits a speed boost. If so give the corresponding player a speed boost,
-            //and redraw the speed boost somewhere else.
-            if (player1.IntersectsWith(speBoost))
-            { 
-                    speBoostTimer.Enabled = true;
-
-                    speBoost.X = randomGenerator.Next(30, 415);
-                    speBoost.Y = randomGenerator.Next(30, 415);
-
-                    player1Speed *= 7;
-
-                soundPlayer = new SoundPlayer(Properties.Resources.speed_boost_sound);
-                soundPlayer.Play();
-            }
-            
-            if (player2.IntersectsWith(speBoost))
-            {
-                speBoostTimer.Enabled = true;
-
-                speBoost.X = randomGenerator.Next(30, 415); ;
-                speBoost.Y = randomGenerator.Next(30, 415); ;
-
-                player2Speed *= 7;
-
-                soundPlayer = new SoundPlayer(Properties.Resources.speed_boost_sound);
-                soundPlayer.Play();
-            }
-
-            //check if either player hits a redos speed. If so give the corresponding player a redosed speed,
-
-            if (player1.IntersectsWith(redosSpe))
-            {
-                redosSpeXSpeed *= -1;
-                redosSpe.X = player1.X + player1.Width;
-
-                player1Speed = 3;
-
-                soundPlayer = new SoundPlayer(Properties.Resources.Redoes_speed);
-                soundPlayer.Play();
-            }
-
-            if (player2.IntersectsWith(redosSpe))
-            {
-                redosSpeXSpeed *= -1;
-                redosSpe.X = player1.X + player1.Width;
-
-                player2Speed = 3;
-
-                soundPlayer = new SoundPlayer(Properties.Resources.Redoes_speed);
-                soundPlayer.Play();
-            }
-
+        public void wallCheck ()
+        {
             //check if player hits a wall
             //right wall
             if (player1.X > 405)
@@ -300,7 +306,7 @@ namespace Air_Hockey
             }
             if (player2.X > 405)
             {
-                player2.X = 404;;
+                player2.X = 404; ;
             }
             //left wall
             if (player1.X < 25)
@@ -330,33 +336,54 @@ namespace Air_Hockey
                 player2.Y = 389;
             }
 
-            Refresh();
+            //check if redosSpe hit wall and change direction if it does 
+            if (reduceSpe.Y < 30 || reduceSpe.Y > this.Height - reduceSpe.Height)
+            {
+                reduceSpeYSpeed *= -1;
+            }
+
+            if (reduceSpe.Y > 410 || reduceSpe.Y > this.Height - reduceSpe.Height)
+            {
+                reduceSpeYSpeed *= -1;
+            }
+
+            if (reduceSpe.X < 30 || reduceSpe.X > this.Width - reduceSpe.Width)
+            {
+                reduceSpeXSpeed *= -1;
+            }
+
+            if (reduceSpe.X > 425 || reduceSpe.X > this.Height - reduceSpe.Height)
+            {
+                reduceSpeXSpeed *= -1;
+            }
+
         }
 
-        private void Form1_Paint(object sender, PaintEventArgs e)
+        public void reduceSpeCheck()
         {
+            //check if either player hits a reduce speed. If so give the corresponding player a redosed speed,
 
-            //displayes all drawn and written components   
+            if (player1.IntersectsWith(reduceSpe))
+            {
+                reduceSpeXSpeed *= -1;
+                reduceSpe.X = player1.X + player1.Width;
 
-            p1ScoreLabel.Text = $"Player 1 :{player1Score}";
-            p2ScoreLabel.Text = $"Player 2 :{player2Score}";
+                player1Speed = 3;
 
-            e.Graphics.DrawRectangle(whitePen, 25, 25, 415, 400);
-            e.Graphics.DrawRectangle(bluePen, player1);
-            e.Graphics.DrawRectangle(redPen, player2);
-            e.Graphics.FillRectangle(whiteBrush, point);
-            e.Graphics.FillEllipse(yellowBrush, speBoost); 
-            e.Graphics.DrawRectangle(fuchsiaPen, redosSpe);
-        }
+                soundPlayer = new SoundPlayer(Properties.Resources.Reduce_speed);
+                soundPlayer.Play();
+            }
 
-        private void speBoostTimer_Tick(object sender, EventArgs e)
-        {
-            // makes the speed boost temporary
-            speBoostTimer.Enabled = false;
+            if (player2.IntersectsWith(reduceSpe))
+            {
+                reduceSpeXSpeed *= -1;
+                reduceSpe.X = player1.X + player1.Width;
 
-            player1Speed = 5; 
-            player2Speed = 5;
+                player2Speed = 3;
 
+                soundPlayer = new SoundPlayer(Properties.Resources.Reduce_speed);
+                soundPlayer.Play();
+            }
         }
     }
 }
